@@ -22,7 +22,7 @@ const herdr = require('./herdr');
 const config = require('./config');
 const hook = require('./hook');
 const { stateRoot, ensureDir } = require('./paths');
-const { logoFor, smallLogoFor, nameFor, stateGlyph, blockedFrame, PUA } = require('./logos');
+const { smallLogoFor, nameFor, stateGlyph, blockedFrame, PUA } = require('./logos');
 const palette = require('./palette');
 
 // `idle_fresh` and `idle_stale` are idle split by how long ago the pane last
@@ -781,7 +781,7 @@ function spaceMark(display) {
 // here only crowded the line. Branded vendors go first, in palette order, so
 // the cell's colour rule (first match wins) lands on a vendor that has a hue.
 //
-// The SMALL mark, not the one the Agents panel wears: the marks share the
+// The SMALL mark, the same one the Agents panel wears: the marks share the
 // name row now, and the full-size mark read as loud as the name itself. The
 // small set is the same outline at ~0.72x (lib/logos.js). A vendor with no
 // glyph falls back to its name so an unrecognised agent is not lost.

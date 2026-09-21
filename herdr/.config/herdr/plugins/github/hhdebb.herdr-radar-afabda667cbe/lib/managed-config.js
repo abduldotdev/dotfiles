@@ -347,8 +347,10 @@ function logoCell(token, glyphs, ink, { bold = false, dim = false } = {}) {
 // Which glyph table the rules above were written against. The rules match
 // literal strings, so a block written for the icon font means nothing once the
 // variant flips to plain Unicode — the daemon compares this line with what it
-// resolves and rewrites the block when they disagree (lib/daemon.js).
-const VARIANT_TAG = '# logo glyphs: ';
+// resolves and rewrites the block when they disagree (lib/daemon.js). The tag
+// doubles as the glyph-table generation marker so a block written against the
+// full-size table is rewritten on the first start after upgrade.
+const VARIANT_TAG = '# logo glyphs (small): ';
 
 function blockVariant(text) {
   return new RegExp(`^${escapeRegExp(VARIANT_TAG)}(\\w+)$`, 'm').exec(text ?? '')?.[1] ?? null;
