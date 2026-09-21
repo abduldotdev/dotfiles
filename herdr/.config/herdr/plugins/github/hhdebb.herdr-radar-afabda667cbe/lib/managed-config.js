@@ -389,7 +389,8 @@ function sidebarBlock(variant) {
   // Colour splits the same way: the logo is the vendor (its brand colour,
   // breathing while that session works), the title is the state (the
   // freshness scale, or a lifecycle colour when something needs you).
-  const glyphs = logos.glyphs();
+  // The Agents logo is the small mark so both panes draw vendors at one size.
+  const glyphs = logos.smallGlyphs();
   const agentRow = (vendor) =>
     [
       // A synthesised parent for a worktree whose own checkout has no session

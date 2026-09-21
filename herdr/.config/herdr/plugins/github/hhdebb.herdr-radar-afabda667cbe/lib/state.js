@@ -389,8 +389,9 @@ function composeLine(entry, display, tabLabel, indent, step = 0, corner = '') {
   //
   // The indent belongs to whichever cell comes first, because Herdr only
   // hangs its own indent on an entry's continuation rows — and with one row
-  // per entry, a member pane's row IS the first row.
-  const logo = logoFor(entry.name);
+  // per entry, a member pane's row IS the first row. The Agents logo is the
+  // small mark so both panes draw vendors at one size.
+  const logo = smallLogoFor(entry.name);
 
   // Motion rides in front of the TITLE, not on the mark. A logo in a terminal
   // cell can only move a few pixels, and a few pixels of moving leg or eye is
