@@ -187,7 +187,7 @@ module.exports = {
 
   showTab: raw.show_tab === true,
   trimGroupPrefix: raw.trim_group_prefix !== false,
-  groupGap: raw.group_gap !== false,
+  groupGap: raw.group_gap === true,
   groupIndentWidth: typeof raw.group_indent === 'number' ? raw.group_indent : 2,
 
   // Keep Herdr's actual workspace indices aligned with Radar's activity order

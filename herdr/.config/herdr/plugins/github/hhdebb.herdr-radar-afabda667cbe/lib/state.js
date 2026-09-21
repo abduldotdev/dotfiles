@@ -22,7 +22,7 @@ const herdr = require('./herdr');
 const config = require('./config');
 const hook = require('./hook');
 const { stateRoot, ensureDir } = require('./paths');
-const { logoFor, smallLogoFor, nameFor, stateGlyph, blockedFrame, PUA } = require('./logos');
+const { smallLogoFor, nameFor, stateGlyph, blockedFrame, PUA } = require('./logos');
 const palette = require('./palette');
 
 // `idle_fresh` and `idle_stale` are idle split by how long ago the pane last
@@ -389,8 +389,9 @@ function composeLine(entry, display, tabLabel, indent, step = 0, corner = '') {
   //
   // The indent belongs to whichever cell comes first, because Herdr only
   // hangs its own indent on an entry's continuation rows — and with one row
-  // per entry, a member pane's row IS the first row.
-  const logo = logoFor(entry.name);
+  // per entry, a member pane's row IS the first row. The Agents logo is the
+  // small mark so both panes draw vendors at one size.
+  const logo = smallLogoFor(entry.name);
 
   // Motion rides in front of the TITLE, not on the mark. A logo in a terminal
   // cell can only move a few pixels, and a few pixels of moving leg or eye is
@@ -780,7 +781,7 @@ function spaceMark(display) {
 // here only crowded the line. Branded vendors go first, in palette order, so
 // the cell's colour rule (first match wins) lands on a vendor that has a hue.
 //
-// The SMALL mark, not the one the Agents panel wears: the marks share the
+// The SMALL mark, the same one the Agents panel wears: the marks share the
 // name row now, and the full-size mark read as loud as the name itself. The
 // small set is the same outline at ~0.72x (lib/logos.js). A vendor with no
 // glyph falls back to its name so an unrecognised agent is not lost.

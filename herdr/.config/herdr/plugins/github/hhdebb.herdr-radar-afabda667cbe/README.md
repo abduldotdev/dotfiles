@@ -233,7 +233,7 @@ the config file and restarts the daemon.
 | `activity_fresh_minutes` | `15` | how long after the last turn a pane still reads as fresh |
 | `activity_stale_minutes` | `120` | how long without a turn before the row dims |
 | `group_indent` | `2` | member indent under a header; `0` for a flat list |
-| `group_gap` | `true` | a blank row between groups |
+| `group_gap` | `false` | a blank row between groups |
 | `reorder_workspaces` | `false` | make Herdr's workspace indices follow Radar's activity order |
 | `show_tab` | `false` | tab number in front of the title |
 | `trim_group_prefix` | `true` | drop the workspace name from a title when the header above already shows it |

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Small vendor marks in Agents panel and no gap between groups by default.**
+  The Agents pane logo cell now uses the same small glyph as the Spaces pane
+  (`smallLogoFor` and `logos.smallGlyphs()`), so both panels draw vendor marks at
+  one unified size. The `group_gap` setting now defaults to `false`, eliminating
+  the blank row between workspace groups unless explicitly enabled.
+
 - **Built-in Herdr theme accent resolution.**
   Herdr's own theme (`[theme] name` in `config.toml`) is now checked for its
   built-in accent colour ahead of falling through to omarchy's `colors.toml`.
