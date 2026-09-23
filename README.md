@@ -48,4 +48,4 @@ cd install-packages
 - These are user configs only.
 - Omarchy source/default files under `~/.local/share/omarchy` are intentionally not tracked.
 - Mako was captured as the current effective config rather than an Omarchy theme symlink.
-- Machine-specific Hyprland display settings in `hypr/.config/hypr/monitors.conf` are intentionally ignored for now.
+- Hyprland uses Omarchy Quattro's Lua configuration; only `hyprsunset.conf` and `xdph.conf` remain standalone.

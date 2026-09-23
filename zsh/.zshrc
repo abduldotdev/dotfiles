@@ -309,6 +309,7 @@ ag1kill() { __antigravity_kill_profile "$HOME/.antigravity-profile-1"; }
 ag2kill() { __antigravity_kill_profile "$HOME/.antigravity-profile-2"; }
 
 # Antigravity CLI
+alias agy="$HOME/.local/bin/agy"
 alias agyd="$HOME/.local/bin/agy --dangerously-skip-permissions"
 
 __agy_profile() {
@@ -381,18 +382,10 @@ if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
 fi
 
 # bun completions
-[ -s "/home/abdul891/.bun/_bun" ] && source "/home/abdul891/.bun/_bun"
-
-
-# Added by Antigravity CLI installer
-export PATH="/home/abdul-lapi/.local/bin:$PATH"
+[ -s "/home/abdul-lapi/.bun/_bun" ] && source "/home/abdul-lapi/.bun/_bun"
 
 # >>> grok installer >>>
 export PATH="$HOME/.grok/bin:$PATH"
 fpath=(~/.grok/completions/zsh $fpath)
 autoload -Uz compinit && compinit -C
 # <<< grok installer <<<
-
-. "$HOME/.atuin/bin/env"
-
-eval "$(atuin init zsh)"

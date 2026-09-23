@@ -11,6 +11,7 @@ PACKAGES=(
   zsh
   tmux
   ghostty
+  foot
   herdr
   hypr
   gtk
@@ -29,6 +30,7 @@ TARGETS=(
   "$HOME/.zshrc"
   "$HOME/.config/tmux"
   "$HOME/.config/ghostty"
+  "$HOME/.config/foot"
   "$HOME/.config/herdr/config.toml"
   "$HOME/.config/hypr"
   "$HOME/.config/gtk-3.0"
@@ -88,18 +90,6 @@ backup_target() {
   echo "Backed up: $target -> $destination"
 }
 
-ensure_local_hypr_files() {
-  local monitors="$HOME/.config/hypr/monitors.conf"
-
-  if [ ! -e "$monitors" ]; then
-    cat >"$monitors" <<'EOF'
-# Local machine-specific monitor configuration.
-# This file is intentionally ignored by the dotfiles repo.
-EOF
-    echo "Created local file: $monitors"
-  fi
-}
-
 require_command stow
 
 mkdir -p "$HOME/.config"
@@ -110,8 +100,6 @@ done
 
 echo "Applying Stow packages: ${PACKAGES[*]}"
 stow -R -d "$ROOT" -t "$HOME" "${PACKAGES[@]}"
-
-ensure_local_hypr_files
 
 if [ -d "$BACKUP_DIR" ]; then
   echo "Backup directory: $BACKUP_DIR"

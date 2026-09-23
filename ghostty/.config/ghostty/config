@@ -4,7 +4,7 @@ command = /usr/bin/zsh -l -i
 # Font
 font-family = "JetBrainsMono Nerd Font"
 font-style = Regular
-font-size =11
+font-size =12
 
 # Window
 window-padding-x = 14
@@ -13,6 +13,7 @@ confirm-close-surface=false
 resize-overlay = never
 # background-opacity = 0.5
 
+gtk-single-instance = true
 
 # Cursor styling
 cursor-style = "block"
@@ -35,10 +36,17 @@ keybind = super+control+shift+alt+arrow_down=resize_split:down,100
 keybind = super+control+shift+alt+arrow_up=resize_split:up,100
 keybind = super+control+shift+alt+arrow_left=resize_split:left,100
 keybind = super+control+shift+alt+arrow_right=resize_split:right,100
-keybind = performable:ctrl+v=paste_from_clipboard
+keybind = performable:control+v=paste_from_clipboard
+
 # Slowdown mouse scrolling
-mouse-scroll-multiplier = 2
+mouse-scroll-multiplier = 3
 keybind = shift+enter=text:\x1b\r
 
 # Fix general slowness on hyprland (https://github.com/ghostty-org/ghostty/discussions/3224)
 async-backend = epoll
+
+# >>> herdr-radar font block
+font-codepoint-map = U+E1A0-U+E1B7=Herdr Agent Icons Max
+font-codepoint-map = U+E1C0-U+E1C5=Herdr Agent Icons Max
+font-codepoint-map = U+E1D0-U+E1E7=Herdr Agent Icons Max
+# <<< herdr-radar font block
