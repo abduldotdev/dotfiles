@@ -28,3 +28,26 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+
+-- [key-visualizer] capture hook (managed by the plugin; safe to remove)
+local kc_path = os.getenv("HOME") .. "/.config/omarchy/plugins/felixzsh.key-visualizer/key-visualizer.lua"
+local kc_file = io.open(kc_path, "r")
+if kc_file then kc_file:close(); dofile(kc_path) end
+
+
+-- [mouse-mark] capture hook (managed by the plugin; safe to remove)
+local mm_path = os.getenv("HOME") .. "/.config/omarchy/plugins/sanbid.mouse-mark/mouse-mark.lua"
+local mm_file = io.open(mm_path, "r")
+if mm_file then mm_file:close(); dofile(mm_path) end
+
+
+
+
+-- [wispr-flow] overlay hide rule (managed by abdul.wispr-flow; safe to remove)
+local wf_path = "/home/abdul/.config/omarchy/plugins/abdul.wispr-flow/hypr/wispr-flow.lua"
+local wf_file = io.open(wf_path, "r")
+if wf_file then wf_file:close(); dofile(wf_path) end
+
+-- Added by hyprmoncfg: its generated monitor rules load last, so nothing before this can override the applied layout.
+do local path = os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua"; local file = io.open(path, "r"); if file then file:close(); dofile(path) end end

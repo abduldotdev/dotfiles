@@ -50,3 +50,5 @@ o.bind("SUPER + F", "Full width", hl.dsp.window.fullscreen({ mode = "maximized" 
 
 hl.unbind("SUPER + ALT + F")
 o.bind("SUPER + ALT + F", "Force full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
+
+o.bind("SUPER + CTRL + M", "Wave:3 controls", "omarchy-shell shell toggle abduldotdev.wave3")
