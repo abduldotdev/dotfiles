@@ -7,6 +7,6 @@ desc = "Copy to Clipboard"
 
 [[mgr.prepend_keymap]]
 on = ["c", "z"]
-run  = ['shell "zip -r .zip ${@##*/}" --cursor=7 --interactive' , "escape --select"]
+run  = ['shell --interactive --cursor=2 -- z=.zip; set --; for p in %s; do set -- "$@" "${p##*/}"; done; zip -r "$z" "$@"', "escape --select"]
 desc = "Zip selected files (or hovered) with name prompt"
 
