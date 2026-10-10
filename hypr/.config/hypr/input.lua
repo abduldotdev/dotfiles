@@ -7,7 +7,7 @@ hl.config({
 	input = {
 		--     -- Use multiple keyboard layouts and switch between them with Left Alt + Right Alt.
 		kb_layout = "us",
-		kb_options = "",
+		kb_options = "compose:caps",
 		--
 		--     -- Use a specific keyboard variant if needed (e.g. intl for international keyboards).
 		--     kb_variant = "intl",
@@ -23,7 +23,7 @@ hl.config({
 		--     sensitivity = 0.35,
 		--
 		--     -- Turn off mouse acceleration (default: adaptive).
-		accel_profile = "flat",
+		accel_profile = "adaptive",
 		scroll_factor = 2,
 
 		touchpad = {
@@ -34,7 +34,7 @@ hl.config({
 			clickfinger_behavior = true,
 
 			-- Control the speed of your scrolling.
-			scroll_factor = 0.4,
+			scroll_factor = 0.2,
 
 			-- Enable the touchpad while typing.
 			disable_while_typing = false,

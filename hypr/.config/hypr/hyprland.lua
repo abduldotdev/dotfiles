@@ -28,3 +28,8 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- [wispr-flow] overlay hide rule (managed by abdul.wispr-flow; safe to remove)
+local wf_path = "/home/abdul/.config/omarchy/plugins/abdul.wispr-flow/hypr/wispr-flow.lua"
+local wf_file = io.open(wf_path, "r")
+if wf_file then wf_file:close(); dofile(wf_path) end
