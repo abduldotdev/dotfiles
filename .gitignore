@@ -7,3 +7,11 @@ waybar/.config/waybar/before/
 *~
 .DS_Store
 .antigravitycli/
+
+# herdr runtime session snapshots
+herdr/.config/herdr/session-snapshots/
+herdr/.config/herdr/session.json
+herdr/.config/herdr/release-notes.json
+herdr/.config/herdr/.plugins.lock
+herdr/.config/herdr/*.log
+herdr/.config/herdr/*.sock

@@ -13,6 +13,7 @@ PACKAGES=(
   ghostty
   foot
   herdr
+  herdr-app
   hypr
   gtk
   icons
@@ -32,6 +33,7 @@ TARGETS=(
   "$HOME/.config/ghostty"
   "$HOME/.config/foot"
   "$HOME/.config/herdr/config.toml"
+  "$HOME/.config/herdr-app"
   "$HOME/.config/hypr"
   "$HOME/.config/gtk-3.0"
   "$HOME/.config/gtk-4.0"

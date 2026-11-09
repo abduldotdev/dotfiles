@@ -19,6 +19,11 @@ onboarding = false
 # tmux renumbers windows automatically; herdr handles this internally.
 # No explicit setting required.
 
+# Start new Herdr panes with zsh even though the account login shell stays bash.
+[terminal]
+default_shell = "/usr/bin/zsh"
+shell_mode = "login"
+
 # ──────────────────────────────────────────────────────────
 # Prefix (tmux: set -g prefix C-Space, prefix2 C-b)
 # herdr supports a single prefix only; using C-Space as primary.

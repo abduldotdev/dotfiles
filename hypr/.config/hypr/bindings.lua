@@ -52,3 +52,17 @@ hl.unbind("SUPER + ALT + F")
 o.bind("SUPER + ALT + F", "Force full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 
 o.bind("SUPER + CTRL + M", "Wave:3 controls", "omarchy-shell shell toggle abduldotdev.wave3")
+
+-- Restore Activity/btop on Super+Ctrl+T (was: Theme menu after Omarchy update).
+o.rebind("SUPER + CTRL + T", "Activity", { tui = "btop" })
+
+-- Calculator: GNOME Calculator instead of omacalc (was: omacalc).
+hl.unbind("SUPER + CTRL + Q")
+o.bind("SUPER + CTRL + Q", "Calculator", "uwsm app -- gnome-calculator")
+
+-- Dictation keys from before Alt + Space and Right Alt became the defaults.
+-- Remove these lines to give the keys back to applications.
+if o.dictation_installed and o.dictation_installed() then
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+  o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
+end

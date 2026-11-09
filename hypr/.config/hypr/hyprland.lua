@@ -28,6 +28,7 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+o.window("org.gnome.Calculator", { float = true, center = true })
 
 
 -- [key-visualizer] capture hook (managed by the plugin; safe to remove)
