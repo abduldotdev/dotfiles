@@ -200,8 +200,8 @@ export default class Agents extends View {
       .text_size(12.5)
       .when(on, (el) => el.bg(t.raised))
       .hover((s) => s.bg(t.hover))
-      // A sub-agent with its own pane opens it; one without is peeked.
-      .on_click(() => this.panesOf.get(k.address) ? run("pane.focus", { pane: this.panesOf.get(k.address) }) : this.peek(k.address))
+      // Sub-agents open in the peek pop-up; only top-level rows switch tabs.
+      .on_click(() => this.peek(k.address))
       .children(s.lines.map(l => div().self_start().mt(-4).w(9).h(17).mr(4).flex_none()
         .when(Boolean(l), el => el.border_l(1.5).border_color(t.input))
         .when(l === "└" || l === "├", el => el.border_b(1.5).rounded_bl(6))))
@@ -228,7 +228,6 @@ export default class Agents extends View {
     const sort = sortOf();
     let list = agents();
     this.listed = new Map(list.map((a) => [a.address, a.status]));
-    this.panesOf = new Map(list.map((a) => [a.address, a.pane]));
     const all = terminals();
     // A sub-agent with its own pane is in agents() too, but it already shows in
     // its parent's tree: only agents with no listed live ancestor get a row.
