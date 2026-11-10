@@ -466,6 +466,37 @@ export default class Agents extends View {
     }
 
     // A group's header; it folds the group. Folded, it says how many and the most urgent state.
+    // A machine's header stands out: a rule above it (but the first), its icon, its name in
+    // capitals and a count pill, so the machines read as separate blocks.
+    const machineHeader = (g, first) => {
+      const open = !this.folded.has(g.id);
+      const local = g.id === "machine-local";
+      const top = g.members.reduce((m, a) => ((RANK[a.status] ?? 0) > (RANK[m] ?? 0) ? a.status : m), null);
+      return v_flex()
+        .flex_none()
+        .when(!first, (el) => el.mt(8).child(div().mx(4).h(1).bg(t.border)))
+        .child(h_flex()
+          .id(g.id)
+          .mt(first ? 2 : 8)
+          .mb(2)
+          .px(8)
+          .h(26)
+          .gap(7)
+          .items_center()
+          .rounded(6)
+          .bg(t.hover)
+          .cursor_pointer()
+          .hover((s) => s.bg(t.selected))
+          .on_click((_e, cx) => {
+            open ? this.folded.add(g.id) : this.folded.delete(g.id);
+            cx.notify();
+          })
+          .child(svg(`mods/workspace-chrome/${local ? "monitor" : "server"}.svg`).size(13).flex_none().text_color(local ? t.foreground : t.ansi4 ?? t.foreground))
+          .child(div().flex_1().min_w(0).truncate().text_size(11).font_bold().text_color(t.foreground).child(g.label.toUpperCase()))
+          .when(!open && top && top !== "idle", (el) => el.child(this.status(t, { status: top }, true)))
+          .child(div().flex_none().px(6).h(16).flex().items_center().rounded(8).bg(t.border).text_size(10.5).font_medium().text_color(t.foreground).child(String(g.members.length)))
+          .child(svg(`mods/workspace-chrome/chevron-${open ? "down" : "right"}.svg`).size(11).flex_none().text_color(t.dim)));
+    };
     const header = (g) => {
       const open = !this.folded.has(g.id);
       const top = g.members.reduce((m, a) => ((RANK[a.status] ?? 0) > (RANK[m] ?? 0) ? a.status : m), null);
@@ -599,14 +630,15 @@ export default class Agents extends View {
     // Priority: a header per machine over its workspace trees, most urgent first.
     const rows = collapsed
       ? list.flatMap((a, i) => withKids(a, i))
-      : groups.flatMap((g) => [header(g), ...(this.folded.has(g.id) ? [] : byPriority && g.id !== "pinned" ? spaceTrees(g.members) : g.members.flatMap((a, i) => withKids(a, i)))]);
+      : groups.flatMap((g, gi) => [g.id.startsWith("machine-") ? machineHeader(g, gi === 0) : header(g), ...(this.folded.has(g.id) ? [] : byPriority && g.id !== "pinned" ? spaceTrees(g.members) : g.members.flatMap((a, i) => withKids(a, i)))]);
 
     return v_flex()
       .size_full()
       .min_h(0)
       .bg(t.chrome)
-      .border_t(1)
-      .border_color(t.border)
+      // The rule between the spaces and agents lists, red so the two read apart.
+      .border_t(2)
+      .border_color(t.ansi1 ?? t.blocked)
       .text_size(13)
       .when(!collapsed, (el) =>
         el.child(
