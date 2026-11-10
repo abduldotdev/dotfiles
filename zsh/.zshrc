@@ -389,3 +389,25 @@ export PATH="$HOME/.grok/bin:$PATH"
 fpath=(~/.grok/completions/zsh $fpath)
 autoload -Uz compinit && compinit -C
 # <<< grok installer <<<
+
+# herdr: label the terminal with the agent launcher typed (cld1, cldh, cdx2, agy1d…)
+# so the herdr-app pane header and agents list show it. Cleared at the next prompt.
+if [[ -n ${HC_TERMINAL_ID-} ]] && (( $+commands[hc] )); then
+  typeset -g __herdr_profile=
+  __herdr_profile_preexec() {
+    local -a words=(${(z)1})
+    local w=$words[1]
+    if [[ $w =~ '^((cld|cdx|agy)[0-9]*[hd]?|claude[0-9]+|codex[0-9]+)$' ]]; then
+      __herdr_profile=$w
+      hc label "$HC_TERMINAL_ID" "profile=$w" >/dev/null 2>&1
+    fi
+  }
+  __herdr_profile_precmd() {
+    [[ -n $__herdr_profile ]] || return 0
+    __herdr_profile=
+    hc label "$HC_TERMINAL_ID" profile= >/dev/null 2>&1
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook preexec __herdr_profile_preexec
+  add-zsh-hook precmd __herdr_profile_precmd
+fi
