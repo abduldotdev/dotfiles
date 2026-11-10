@@ -552,8 +552,7 @@ export default class Agents extends View {
         .cursor_pointer()
         .hover((s) => s.bg(t.hover))
         .map(folder(`ws-${id}`, open))
-        .child(div().size(16).flex_none().rounded(4).bg(fill).flex().items_center().justify_center()
-          .text_size(10).font_bold().text_color(t.background).child((name[0] ?? "?").toUpperCase()))
+        .child(h_flex().size(16).flex_none().items_center().justify_center().child(svg("mods/workspace-chrome/folder.svg").size(14).text_color(t.dim)))
         .child(div().flex_1().min_w(0).truncate().font_medium().text_color(t.foreground).child(name))
         .map(tail(members, open));
     };
