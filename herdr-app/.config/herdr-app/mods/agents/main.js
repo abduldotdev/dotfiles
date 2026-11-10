@@ -200,7 +200,6 @@ export default class Agents extends View {
       .text_size(12.5)
       .when(on, (el) => el.bg(t.raised))
       .hover((s) => s.bg(t.hover))
-      // Sub-agents open in the peek pop-up; only top-level rows switch tabs.
       .on_click(() => this.peek(k.address))
       .children(s.lines.map(l => div().self_start().mt(-4).w(9).h(17).mr(4).flex_none()
         .when(Boolean(l), el => el.border_l(1.5).border_color(t.input))
@@ -229,19 +228,6 @@ export default class Agents extends View {
     let list = agents();
     this.listed = new Map(list.map((a) => [a.address, a.status]));
     const all = terminals();
-    // A sub-agent with its own pane is in agents() too, but it already shows in
-    // its parent's tree: only agents with no listed live ancestor get a row.
-    const byAddr = new Map(all.map((k) => [k.address, k]));
-    const nested = (a) => {
-      for (let p = byAddr.get(a.address)?.parent, seen = 0; p && seen < 32; seen++) {
-        const up = byAddr.get(p);
-        if (!up || up.state !== "live") return false;
-        if (this.listed.has(p)) return true;
-        p = up.parent;
-      }
-      return false;
-    };
-    list = list.filter((a) => !nested(a));
     this.migratePins(all);
     const shown = focused()?.agent;
     const now = Date.now();
@@ -260,7 +246,7 @@ export default class Agents extends View {
       const subs = collapsed ? [] : this.tree(all, a.address);
       const r = row(a, i, subs);
       if (this.folded.has(a.address)) return [r];
-      return [r, ...subs.map((s) => this.subRow(t, s, shown, true))];
+      return [r, ...subs.map((s) => this.subRow(t, s, shown, byPriority))];
     };
 
     // The fold chevron; folded, the count too, colored by the most urgent one.
@@ -376,7 +362,7 @@ export default class Agents extends View {
         .when(subs.length > 0, el => el.child(fold(a, subs)))
         .when(this.hovered === a.address, el => el.child(pin))
         .when(this.hovered !== a.address && Boolean(when), el => el.child(div().flex_none().text_size(11).text_color(t.dim).child(duration(now - when))))
-        .child(this.status(t, a));
+        .child(this.status(t, a, byPriority && !isPinned));
     };
 
     // Groups in list order: spaces (grouped) or priority sections. Agents of a
@@ -416,8 +402,7 @@ export default class Agents extends View {
           .when(!byPriority && top && top !== "idle", (el) => el.child(this.status(t, { status: top }, true)))
           .child(svg("mods/workspace-chrome/chevron-right.svg").size(11).flex_none().text_color(t.dim)));
     };
-    // Priority: no section headers, just the trees, most urgent first.
-    const rows = collapsed || byPriority
+    const rows = collapsed
       ? list.flatMap(withKids)
       : groups.flatMap((g) => [header(g), ...(this.folded.has(g.id) ? [] : g.members.flatMap(withKids))]);
 
