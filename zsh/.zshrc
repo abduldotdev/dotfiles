@@ -110,9 +110,11 @@ alias oc="opencode"
 
 # Claude aliases
 alias cld="claude --dangerously-skip-permissions"
-alias claude1="CLAUDE_CONFIG_DIR=~/.claude-profile-1 claude"
+alias claude1="~/.agents/link-claude-profiles.sh; CLAUDE_CONFIG_DIR=~/.claude-profile-1 claude"
 alias cld1="claude1 --dangerously-skip-permissions"
-alias claude2="CLAUDE_CONFIG_DIR=~/.claude-profile-2 claude"
+alias cldh='claude --dangerously-skip-permissions --model haiku --effort high'
+alias cld1h='claude1 --dangerously-skip-permissions --model haiku --effort high'
+alias claude2="~/.agents/link-claude-profiles.sh; CLAUDE_CONFIG_DIR=~/.claude-profile-2 claude"
 alias cld2="claude2 --dangerously-skip-permissions"
 
 # Codex aliases
@@ -309,7 +311,6 @@ ag1kill() { __antigravity_kill_profile "$HOME/.antigravity-profile-1"; }
 ag2kill() { __antigravity_kill_profile "$HOME/.antigravity-profile-2"; }
 
 # Antigravity CLI
-alias agy="$HOME/.local/bin/agy"
 alias agyd="$HOME/.local/bin/agy --dangerously-skip-permissions"
 
 __agy_profile() {
@@ -382,13 +383,22 @@ if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
 fi
 
 # bun completions
-[ -s "/home/abdul891/.bun/_bun" ] && source "/home/abdul891/.bun/_bun"
+[ -s "/home/abdul/.bun/_bun" ] && source "/home/abdul/.bun/_bun"
+
 
 # >>> grok installer >>>
 export PATH="$HOME/.grok/bin:$PATH"
 fpath=(~/.grok/completions/zsh $fpath)
 autoload -Uz compinit && compinit -C
 # <<< grok installer <<<
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/abdul/.local/bin:$PATH"
+
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh --disable-up-arrow)"
 
 # herdr: label the terminal with the agent launcher typed (cld1, cldh, cdx2, agy1d…)
 # so the herdr-app pane header and agents list show it. Cleared at the next prompt.
