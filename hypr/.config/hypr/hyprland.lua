@@ -33,3 +33,6 @@ require("default.hypr.toggles")
 local wf_path = "/home/abdul/.config/omarchy/plugins/abdul.wispr-flow/hypr/wispr-flow.lua"
 local wf_file = io.open(wf_path, "r")
 if wf_file then wf_file:close(); dofile(wf_path) end
+
+-- Added by hyprmoncfg: its generated monitor rules load last, so nothing before this can override the applied layout.
+do local path = os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua"; local file = io.open(path, "r"); if file then file:close(); dofile(path) end end

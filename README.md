@@ -10,6 +10,7 @@ User configuration managed with GNU Stow.
 - `tmux` -> `~/.config/tmux`
 - `ghostty` -> `~/.config/ghostty`
 - `herdr` -> `~/.config/herdr/config.toml`
+- `herdr-app` -> `~/.config/herdr-app` (config, layouts, themes, mods; live state stays local)
 - `hypr` -> `~/.config/hypr`
 - `mako` -> `~/.config/mako`
 - `nvim` -> `~/.config/nvim`
@@ -26,12 +27,14 @@ From this directory:
 ./setup-configs.sh
 ```
 
-The setup script backs up existing config targets before applying Stow links.
+The setup script backs up existing config targets before applying Stow links. For
+Herdr App it backs up only conflicting config files, preserving live app state.
 
 To relink manually after changes:
 
 ```bash
 stow -R -t "$HOME" atuin bash zsh tmux ghostty herdr hypr mako nvim omarchy starship waybar yazi
+stow -t "$HOME" herdr-app
 ```
 
 ## Install Packages

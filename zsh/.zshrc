@@ -1,11 +1,26 @@
 # If not running interactively, don't do anything.
 [[ -o interactive ]] || return
 
+# Powerlevel10k instant prompt (disabled in favor of Starship)
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+
 # Keep the system login shell as bash, but let tools started from zsh know the
 # active interactive shell is zsh.
 export SHELL=/usr/bin/zsh
 export EDITOR=nvim
 export VISUAL=nvim
+
+# Herdr's persistent server may outlive the graphical session that started it.
+# Restore the compositor socket for agents launched in new Herdr panes.
+if [[ ${HERDR_ENV-} == 1 && -z ${WAYLAND_DISPLAY-} ]]; then
+  herdr_display=$(systemctl --user show-environment | sed -n 's/^WAYLAND_DISPLAY=//p')
+  if [[ -n $herdr_display && -S ${XDG_RUNTIME_DIR:-/run/user/$UID}/$herdr_display ]]; then
+    export WAYLAND_DISPLAY=$herdr_display XDG_SESSION_TYPE=wayland
+  fi
+  unset herdr_display
+fi
 
 # History
 HISTFILE=~/.histfile
@@ -166,6 +181,12 @@ fi
 if [[ ${TERM:-} != "dumb" ]] && command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
+
+# Powerlevel10k prompt (disabled in favor of Starship)
+# if [[ ${TERM:-} != "dumb" && -r ~/.local/share/powerlevel10k/powerlevel10k.zsh-theme ]]; then
+#   source ~/.local/share/powerlevel10k/powerlevel10k.zsh-theme
+#   [[ -r ~/.p10k.zsh ]] && source ~/.p10k.zsh
+# fi
 
 # try
 if command -v try >/dev/null 2>&1; then
@@ -369,11 +390,10 @@ agy1d() { __agy_profile 1 --dangerously-skip-permissions "$@"; }
 agy2()  { __agy_profile 2 "$@"; }
 agy2d() { __agy_profile 2 --dangerously-skip-permissions "$@"; }
 
-# Ghostty integration
-if [[ -n ${GHOSTTY_RESOURCES_DIR-} && -r ${GHOSTTY_RESOURCES_DIR}/shell-integration/zsh/ghostty-integration ]]; then
+# Ghostty integration (only directly inside Ghostty; elsewhere, e.g. herdr,
+# it garbles the Powerlevel10k prompt).
+if [[ -z ${HERDR_ENV-} && -n ${GHOSTTY_RESOURCES_DIR-} && -r ${GHOSTTY_RESOURCES_DIR}/shell-integration/zsh/ghostty-integration ]]; then
   source "${GHOSTTY_RESOURCES_DIR}/shell-integration/zsh/ghostty-integration"
-elif [[ -r /usr/share/ghostty/shell-integration/zsh/ghostty-integration ]]; then
-  source /usr/share/ghostty/shell-integration/zsh/ghostty-integration
 fi
 
 # zsh-syntax-highlighting should be loaded last so it can wrap final widgets.

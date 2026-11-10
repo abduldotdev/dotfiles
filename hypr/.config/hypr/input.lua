@@ -23,7 +23,7 @@ hl.config({
 		--     sensitivity = 0.35,
 		--
 		--     -- Turn off mouse acceleration (default: adaptive).
-		accel_profile = "adaptive",
+		accel_profile = "flat",
 		scroll_factor = 2,
 
 		touchpad = {

@@ -1,0 +1,32 @@
+{
+  "c": "tab.new",
+  "r": "tab.rename",
+  "k": "tab.close",
+  "shift-c": "space.new",
+  "shift-r": "space.rename",
+  "shift-k": "space.close",
+  "v": "pane.split:right",
+  "h": "pane.split:down",
+  "x": "pane.close",
+  "z": "pane.zoom",
+  "b": "layout.toggle:sidebar",
+  "alt-s": "app.settings",
+  "alt-g": "mod.open:picker",
+  "g": "mod.open:lazygit",
+  "d": "window.close",
+  "shift-d": {
+    "command": "tab.new",
+    "args": {
+      "mod": "files",
+      "name": "Files"
+    }
+  },
+  "e": {
+    "exec": [
+      "nautilus",
+      "--new-window",
+      "{cwd}"
+    ]
+  },
+  "y": "mod.open:yazi"
+}

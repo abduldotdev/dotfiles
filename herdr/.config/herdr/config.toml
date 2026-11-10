@@ -233,3 +233,7 @@ rows = [
   ]
 ]
 # <<< herdr-radar sidebar block
+
+[terminal]
+# Use zsh for new panes without changing the system login shell.
+default_shell = "/usr/bin/zsh"

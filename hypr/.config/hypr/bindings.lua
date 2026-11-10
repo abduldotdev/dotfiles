@@ -40,6 +40,8 @@ for _, binding in ipairs(bindings) do
 	o.bind(binding[1], binding[2], binding[3])
 end
 
+o.rebind("SUPER + CTRL + T", "Btop", "omarchy-launch-tui btop")
+
 -- Replace Omarchy's close/full-screen bindings with the legacy behavior.
 hl.unbind("SUPER + W")
 hl.unbind("SUPER + Q")
@@ -50,3 +52,10 @@ o.bind("SUPER + F", "Full width", hl.dsp.window.fullscreen({ mode = "maximized" 
 
 hl.unbind("SUPER + ALT + F")
 o.bind("SUPER + ALT + F", "Force full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
+
+-- Dictation keys from before Alt + Space and Right Alt became the defaults.
+-- Remove these lines to give the keys back to applications.
+if o.dictation_installed and o.dictation_installed() then
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+  o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
+end
