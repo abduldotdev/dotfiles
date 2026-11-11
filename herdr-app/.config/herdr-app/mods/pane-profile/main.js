@@ -6,7 +6,7 @@
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { panes, props, run, terminals, theme, home } from "herdr";
+import { panes, props, run, terminals, theme, home, shared } from "herdr";
 
 // The zsh launcher that started the agent (cld1, agy2d, cdx…), set by the
 // zsh preexec hook as the terminal label `profile`.
@@ -53,15 +53,18 @@ export default class Pane extends View {
     const pic = icon(p.program, 14, t.dim);
     const st = p.status;
     const pane = p.pane;
+    // Ctrl+Space armed: the leader popup holds the keyboard, so Herdr drops the
+    // focus border; mark the focused pane here instead, in the theme's accent.
+    const armed = p.focused && shared("leader.active") === true;
     return h_flex()
       .id(`pane-head-${pane}`)
       .size_full()
       .px(10)
       .gap(8)
       .items_center()
-      .bg(t.background)
+      .bg(armed ? t.accent + "26" : t.background)
       .border_b(1)
-      .border_color(t.border)
+      .border_color(armed ? t.accent : t.border)
       .text_size(12)
       .on_hover((hovered, cx) => { this.hovered = hovered; cx.notify(); })
       .on_click(() => run("pane.focus", { pane }))
