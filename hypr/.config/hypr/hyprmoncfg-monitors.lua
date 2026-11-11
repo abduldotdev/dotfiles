@@ -87,6 +87,12 @@ if type(o) == "table" and type(o.workspaces) == "table" and type(o.workspaces.re
   end
 end
 
+hl.workspace_rule({ workspace = "1", monitor = "desc:Samsung Electric Company LC27RG50 H4ZR100388", default = true, persistent = true })
+hl.workspace_rule({ workspace = "2", monitor = "desc:Samsung Electric Company LC27RG50 H4ZR100388" })
+hl.workspace_rule({ workspace = "3", monitor = "desc:Samsung Electric Company LC27RG50 H4ZR100388" })
+hl.workspace_rule({ workspace = "4", monitor = "desc:ASUSTek COMPUTER INC VG279QL1A 1322131231233", default = true, persistent = true })
+hl.workspace_rule({ workspace = "5", monitor = "desc:Dell Inc. DELL P2219H 9JX4YS2", default = true, persistent = true })
+
 -- Omarchy leaves GDK_SCALE to this file.
 if type(o) == "table" then hl.env("GDK_SCALE", "1") end
 

@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""Record how to resume the agent running in this herdr-core terminal.
+
+herdr-core gives a lost terminal (reboot, core restart) a fresh shell at the
+same address but never reruns its program. This script is called from the
+agents' session-start hooks and writes, per terminal, the profile alias that
+launched the agent (cld, cld1, cdx2, omp...) and its session id. On the next
+start of that terminal, ~/.zshrc reads the record and relaunches the same
+profile with the session resumed.
+
+Usage:
+  hc-resume-record claude          (hook JSON on stdin: session_id, cwd)
+  hc-resume-record codex           (hook JSON on stdin: session_id, cwd)
+  hc-resume-record omp <session>   (omp extension; session file path)
+
+Needs, from the terminal's root zsh: HC_TERMINAL_ID, HC_SHELL_PID and
+HC_AGENT_PROFILE (exported by preexec for the agent command typed).
+"""
+import json
+import os
+import re
+import shlex
+import sys
+import time
+
+STATE = os.path.join(os.environ.get("XDG_STATE_HOME") or os.path.expanduser("~/.local/state"), "hc-resume")
+SHELLS = {"sh", "bash", "dash", "zsh", "fish"}
+FAMILY = {
+    "claude": re.compile(r"^(cld|claude)[0-9]*[hd]?$"),
+    "codex": re.compile(r"^(cdx|codex)[0-9]*[hd]?$"),
+    "omp": re.compile(r"^omp[0-9]*$"),
+}
+
+
+def proc(pid):
+    """(comm, ppid) of a process, or None."""
+    try:
+        with open(f"/proc/{pid}/stat") as f:
+            data = f.read()
+    except OSError:
+        return None
+    comm = data[data.index("(") + 1 : data.rindex(")")]
+    ppid = int(data[data.rindex(")") + 2 :].split()[1])
+    return comm, ppid
+
+
+def started_by_root_shell(shell_pid):
+    """True when the agent above us was launched straight from the terminal's
+    root shell: walking up from our parent, skip the shell that runs the hook,
+    pass the agent's own processes, and reach shell_pid without meeting another
+    shell (which would mean a nested agent, e.g. one started by a tool call)."""
+    pid = os.getppid()
+    leading = True
+    for _ in range(64):
+        if pid == shell_pid:
+            return True
+        info = proc(pid)
+        if not info or pid <= 1:
+            return False
+        comm, ppid = info
+        if comm in SHELLS:
+            if not leading:
+                return False
+        else:
+            leading = False
+        pid = ppid
+    return False
+
+
+def boot_id():
+    with open("/proc/sys/kernel/random/boot_id") as f:
+        return f.read().strip()
+
+
+def prune():
+    cutoff = time.time() - 30 * 86400
+    try:
+        for name in os.listdir(STATE):
+            path = os.path.join(STATE, name)
+            if os.path.getmtime(path) < cutoff:
+                os.unlink(path)
+    except OSError:
+        pass
+
+
+def main():
+    if len(sys.argv) < 2 or sys.argv[1] not in FAMILY:
+        return
+    agent = sys.argv[1]
+    terminal = os.environ.get("HC_TERMINAL_ID", "")
+    profile = os.environ.get("HC_AGENT_PROFILE", "")
+    shell = os.environ.get("HC_SHELL_PID", "")
+    if not (re.fullmatch(r"[A-Za-z0-9_.-]+", terminal) and shell.isdigit()):
+        return
+    if not FAMILY[agent].match(profile):
+        return
+    if not started_by_root_shell(int(shell)):
+        return
+
+    if agent == "omp":
+        session = sys.argv[2] if len(sys.argv) > 2 else ""
+        cwd = os.getcwd()
+    else:
+        try:
+            data = json.load(sys.stdin)
+        except ValueError:
+            return
+        session = str(data.get("session_id") or "")
+        cwd = str(data.get("cwd") or os.getcwd())
+    if not session:
+        return
+
+    q = shlex.quote
+    if agent == "claude":
+        cmd = f"{profile} --resume {q(session)}"
+    elif agent == "codex":
+        cmd = f"{profile} resume {q(session)}"
+    else:
+        cmd = f"{profile} --resume {q(session)}"
+
+    fields = {
+        "hcr_boot": boot_id(),
+        "hcr_shell": shell,
+        "hcr_agent": agent,
+        "hcr_profile": profile,
+        "hcr_session": session,
+        "hcr_cwd": cwd,
+        "hcr_cmd": cmd,
+    }
+    os.makedirs(STATE, mode=0o700, exist_ok=True)
+    path = os.path.join(STATE, f"{terminal}.zsh")
+    tmp = f"{path}.{os.getpid()}.tmp"
+    with open(tmp, "w") as f:
+        for k, v in fields.items():
+            f.write(f"{k}={q(v)}\n")
+    os.replace(tmp, path)
+    prune()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception:
+        pass  # never get in the agent's way

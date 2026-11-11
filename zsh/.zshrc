@@ -421,3 +421,60 @@ if [[ -n ${HC_TERMINAL_ID-} ]] && (( $+commands[hc] )); then
   add-zsh-hook preexec __herdr_profile_preexec
   add-zsh-hook precmd __herdr_profile_precmd
 fi
+
+# herdr-core agent resume: herdr-core gives a lost terminal (reboot, core
+# restart) a plain shell at the same address. The agents' session-start hooks
+# (~/.config/herdr-app/resume/hc-resume-record) record the profile alias and
+# session per terminal; this relaunches it, in the same profile, when the
+# terminal's root shell comes back. An agent that exits normally clears its
+# record at the next prompt, so only agents cut off by the loss come back.
+if [[ -n ${HC_TERMINAL_ID-} && -r /proc/$PPID/comm && "$(</proc/$PPID/comm)" == herdr-core ]]; then
+  export HC_SHELL_PID=$$
+  typeset -g __hcr_file=${XDG_STATE_HOME:-$HOME/.local/state}/hc-resume/$HC_TERMINAL_ID.zsh
+  typeset -g __hcr_boot="$(</proc/sys/kernel/random/boot_id)"
+  typeset -g __hcr_pending=
+
+  __hcr_preexec() {
+    local -a words=(${(z)1})
+    if [[ $words[1] =~ '^((cld|cdx)[0-9]*[hd]?|claude[0-9]*|codex[0-9]*|omp)$' ]]; then
+      export HC_AGENT_PROFILE=$words[1]
+    fi
+  }
+  __hcr_precmd() {
+    unset HC_AGENT_PROFILE
+    [[ -z $__hcr_pending && -f $__hcr_file ]] || return 0
+    local hcr_boot hcr_shell hcr_agent hcr_profile hcr_session hcr_cwd hcr_cmd
+    source $__hcr_file
+    # Ours and back at a prompt: the agent ended on its own.
+    [[ $hcr_shell == $$ && $hcr_boot == $__hcr_boot ]] && rm -f -- $__hcr_file
+  }
+  __hcr_line_init() {
+    [[ -n $__hcr_pending ]] || return 0
+    BUFFER=$__hcr_pending
+    __hcr_pending=
+    zle accept-line
+  }
+
+  if [[ -f $__hcr_file ]]; then
+    () {
+      local hcr_boot hcr_shell hcr_agent hcr_profile hcr_session hcr_cwd hcr_cmd
+      source $__hcr_file
+      [[ -n $hcr_cmd && ( $hcr_shell != $$ || $hcr_boot != $__hcr_boot ) ]] || return 0
+      [[ -d $hcr_cwd ]] && builtin cd -q -- $hcr_cwd
+      # Claim the record for this shell, so a resume that fails and exits is
+      # cleared at the next prompt instead of retried on every restart.
+      hcr_shell=$$ hcr_boot=$__hcr_boot
+      local k
+      for k in hcr_boot hcr_shell hcr_agent hcr_profile hcr_session hcr_cwd hcr_cmd; do
+        print -r -- "$k=${(q)${(P)k}}"
+      done >| $__hcr_file
+      __hcr_pending=$hcr_cmd
+      print -P "%F{8}↻ resuming $hcr_profile session $hcr_session%f"
+    }
+  fi
+
+  autoload -Uz add-zsh-hook add-zle-hook-widget
+  add-zsh-hook preexec __hcr_preexec
+  add-zsh-hook precmd __hcr_precmd
+  add-zle-hook-widget line-init __hcr_line_init
+fi
